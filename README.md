@@ -56,3 +56,19 @@ clientes-api
 ├── docker-compose.yml
 ├── pom.xml
 └── README.md
+```
+
+---
+## 📸 Demonstração
+
+### Consulta de Clientes via Postman
+
+<p align="center">
+  <img src="images/postman-get-clients.png" alt="Consulta de clientes no Postman" width="900">
+</p>
+
+### Aplicação e Banco em Execução com Docker Compose
+
+<p align="center">
+  <img src="images/docker-compose-running.png" alt="Aplicação e banco rodando com Docker Compose" width="900">
+</p>
