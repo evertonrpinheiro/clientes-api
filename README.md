@@ -1,3 +1,8 @@
+![Java](https://img.shields.io/badge/Java-17-blue)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED)
+
 # 🚀 Clientes API
 
 API REST para gerenciamento de clientes desenvolvida com **Java 17**, **Spring Boot**, **PostgreSQL** e **Docker**.
