@@ -3,3 +3,8 @@ target/
 *.iml
 *.log
 .env
+
+# AI Agent Kit
+.agents/
+.memory/
+AGENTS.md

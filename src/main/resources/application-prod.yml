@@ -1,0 +1,11 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: validate # Safety: don't alter DB schema in prod automatically
+  datasource:
+    hikari:
+      maximum-pool-size: 10 # Optimized connection pool for production

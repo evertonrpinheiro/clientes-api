@@ -1,23 +1,39 @@
 services:
   db:
-    image: postgres:16
+    image: postgres:16-alpine
     container_name: clientes-db
     environment:
-      POSTGRES_DB: clientesdb
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${DB_NAME:-clientesdb}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
     ports:
-      - "5432:5432"
+      - "${DB_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-clientesdb}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
       - clientes_data:/var/lib/postgresql/data
 
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: clientes-api
     depends_on:
-      - db
+      db:
+        condition: service_healthy # Wait for DB to be ready
     ports:
-      - "8080:8080"
+      - "${APP_PORT:-8080}:8080"
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=${DB_NAME:-clientesdb}
+      - DB_USER=${DB_USER:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-postgres}
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-prod}
+    restart: always
 
 volumes:
   clientes_data:

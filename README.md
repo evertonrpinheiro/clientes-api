@@ -1,206 +1,100 @@
-![Java](https://img.shields.io/badge/Java-17-blue)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue)
-![Docker](https://img.shields.io/badge/Docker-Compose-2496ED)
+# Clientes API 🚀
 
-# 🚀 Clientes API
+[![Java](https://img.shields.io/badge/Java-17-ED8B00?style=for-the-badge&logo=java&logoColor=white)](https://www.oracle.com/java/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4.6-6DB33F?style=for-the-badge&logo=spring&logoColor=white)](https://spring.io/projects/spring-boot)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Docker](https://img.shields.io/badge/Docker-Multi--stage-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
 
-API REST para gerenciamento de clientes desenvolvida com **Java 17**, **Spring Boot**, **PostgreSQL** e **Docker**.
-
-Este projeto demonstra conhecimentos práticos em desenvolvimento backend, arquitetura em camadas, APIs REST, persistência de dados, containerização e documentação técnica.
+API REST de alta performance para gerenciamento de clientes, desenvolvida com foco em **Clean Code**, **S.O.L.I.D.** e **Arquitetura de Produção**. Este projeto foi auditado e refatorado para atingir padrões de engenharia sênior.
 
 ---
 
-## 📌 Tecnologias Utilizadas
+## 🏛️ Arquitetura e Design de Software
 
-- Java 17
-- Spring Boot
-- Spring Web
-- Spring Data JPA
-- PostgreSQL
-- Docker
-- Docker Compose
-- Maven
-- Lombok
-- Bean Validation
-- Git e GitHub
-- Postman
+O projeto segue uma arquitetura em camadas bem definida, garantindo o desacoplamento e a testabilidade do sistema.
 
----
+### 🔄 Fluxo de Dados (Mermaid)
 
-## ✨ Funcionalidades
-
-- Cadastro de clientes
-- Listagem de clientes
-- Busca de cliente por ID
-- Atualização de dados
-- Exclusão de clientes
-- Validação de campos obrigatórios
-- Restrição de e-mail único
-- Persistência em PostgreSQL
-- Execução com Docker Compose
-
----
-
-## 📂 Estrutura do Projeto
-
-```text
-clientes-api
-├── images
-│   ├── postman-create-client.png
-│   └── docker-compose-running.png
-├── src/main/java/com/everton/clientesapi
-│   ├── controller
-│   ├── dto
-│   ├── model
-│   ├── repository
-│   └── service
-├── src/main/resources
-│   └── application.properties
-├── Dockerfile
-├── docker-compose.yml
-├── pom.xml
-└── README.md
+```mermaid
+graph LR
+    Client([Client/Frontend]) --> Controller[ClienteController]
+    Controller -- DTO --> Service[ClienteService]
+    Service -- Entity --> Repository[ClienteRepository]
+    Repository -- SQL --> DB[(PostgreSQL)]
+    
+    subgraph Exception Handling
+        Service -- Throws --> Handler[GlobalExceptionHandler]
+        Handler -- RFC 7807 --> Client
+    end
 ```
 
+### 🧠 Destaques Técnicos
+
+| Característica | Implementação |
+| :--- | :--- |
+| **Encapsulamento** | Uso rigoroso de **DTOs** (Request/Response) para evitar exposição de entidades JPA. |
+| **Tratamento de Erros** | Implementação de **RFC 7807 (Problem Details)** com `@RestControllerAdvice`. |
+| **Integridade de Dados** | Validação avançada com **Bean Validation** (Regex, Size, Constraints). |
+| **Persistência** | Transações gerenciadas com `@Transactional` e PostgreSQL 16. |
+| **Infraestrutura** | **Docker Multi-stage Build** com imagem final baseada em JRE-Alpine (leve e segura). |
+
 ---
 
-## ▶️ Como Executar
+## 🐳 Infraestrutura e DevOps
+
+### Docker Multi-stage
+O projeto utiliza um `Dockerfile` otimizado:
+1. **Builder Stage**: Compila o código dentro de um ambiente isolado.
+2. **Runner Stage**: Executa a aplicação usando um **JRE leve**, rodando com **usuário não-root** para máxima segurança.
+
+### Resiliência
+O `docker-compose.yml` inclui **Healthchecks**, garantindo que a aplicação Spring só inicie após o banco de dados estar pronto para conexões.
+
+---
+
+## 🚀 Como Executar
 
 ### Pré-requisitos
+- Docker e Docker Compose instalados.
 
-- Java 17+
-- Maven 3.9+
-- Docker Desktop
-
-### 1. Clonar o repositório
-
+### 1. Configurar Variáveis de Ambiente
+Crie um arquivo `.env` na raiz do projeto (ou copie do `.env.example`):
 ```bash
-git clone https://github.com/evertonrpinheiro/clientes-api.git
-cd clientes-api
+cp .env.example .env
 ```
 
-### 2. Gerar o arquivo `.jar`
-
-```bash
-mvn clean package -DskipTests
-```
-
-### 3. Subir a aplicação e o banco
-
+### 2. Subir o Ecossistema
 ```bash
 docker compose up --build
 ```
-
-### 4. Acessar a API
-
-```text
-http://localhost:8080/api/clientes
-```
+A API estará disponível em `http://localhost:8080/api/clientes`.
 
 ---
 
-## 📬 Endpoints
+## 📬 Endpoints Principais
 
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| POST   | `/api/clientes`      | Cadastrar cliente |
-| GET    | `/api/clientes`      | Listar todos os clientes |
-| GET    | `/api/clientes/{id}` | Buscar cliente por ID |
-| PUT    | `/api/clientes/{id}` | Atualizar cliente |
-| DELETE | `/api/clientes/{id}` | Excluir cliente |
+- `GET /api/clientes` - Listagem completa (Retorna `ClienteResponse`).
+- `POST /api/clientes` - Cadastro (Validação via `ClienteRequest`).
+- `GET /api/clientes/{id}` - Busca detalhada (Lança `404` se inexistente).
+- `GET /actuator/health` - Status de saúde da aplicação e banco.
 
 ---
 
-## 📝 Exemplo de Requisição
+## 🧪 Qualidade de Código
 
-### POST `/api/clientes`
-
-```json
-{
-  "nome": "Everton Rodrigues Pinheiro",
-  "email": "everton1857@gmail.com",
-  "telefone": "44999999999"
-}
-```
-
-### Exemplo de Resposta
-
-```json
-{
-  "id": 1,
-  "nome": "Everton Rodrigues Pinheiro",
-  "email": "everton1857@gmail.com",
-  "telefone": "44999999999"
-}
-```
-
----
-
-## 📸 Demonstração
-
-### Consulta de Clientes via Postman
-
-> Salve a imagem em: `images/postman-create-client.png`
-
-```markdown
-![Consulta de clientes no Postman](images/postman-create-client.png)
-```
-
-### Aplicação e Banco em Execução com Docker Compose
-
-> Salve a imagem em: `images/docker-compose-running.png`
-
-```markdown
-![Aplicação e banco rodando com Docker Compose](images/docker-compose-running.png)
-```
-
----
-
-## 🐳 Docker
-
-O projeto utiliza dois containers:
-
-- `app`: aplicação Spring Boot
-- `db`: banco de dados PostgreSQL
-
----
-
-## 🧠 Competências Demonstradas
-
-- Desenvolvimento de APIs REST
-- Programação Orientada a Objetos (POO)
-- Arquitetura em camadas
-- Spring Boot
-- JPA/Hibernate
-- SQL e PostgreSQL
-- Docker e Docker Compose
-- Validação de dados
-- Git e GitHub
-- Documentação técnica
-
----
-
-## 🔮 Melhorias Futuras
-
-- Tratamento global de exceções com `@ControllerAdvice`
-- Testes unitários com JUnit e Mockito
-- Documentação com Swagger/OpenAPI
-- Pipeline CI/CD com GitHub Actions
-- Deploy em nuvem (Render, Railway ou Azure)
+- **SOLID**: Princípios aplicados para garantir que cada classe tenha uma única responsabilidade.
+- **Mappers**: Conversão entre entidades e DTOs centralizada em componentes `@Component`.
+- **Clean Code**: Nomenclatura semântica e métodos curtos e expressivos.
 
 ---
 
 ## 👨‍💻 Autor
 
-**Everton Rodrigues Pinheiro**
-
-- LinkedIn: https://www.linkedin.com/in/evertonrpinheiro/
-- GitHub: https://github.com/evertonrpinheiro
-- E-mail: everton1857@gmail.com
+**Everton Rodrigues Pinheiro**  
+Desenvolvido como demonstração de padrões de engenharia de software de alto nível.
 
 ---
+<p align="center">
+  Refatorado com o suporte do <b>everton-ai-agent-kit</b>.
+</p>
 
-## 📄 Licença
-
-Projeto desenvolvido para fins educacionais e de portfólio.
