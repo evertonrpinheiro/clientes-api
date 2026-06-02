@@ -66,6 +66,18 @@ The infrastructure follows the **Immutable Infrastructure** principle.
 - **Non-Root Execution**: Process runs as a restricted `spring` user, significantly reducing the attack surface.
 - **Database Health-Awareness**: The application only initiates after the PostgreSQL `pg_isready` signal is confirmed.
 
+### 🗄️ Database Migrations (Flyway)
+
+Professional backend systems version their database schema just like their code.
+
+- **Traceability**: Every change to the database is recorded as a versioned script.
+- **Consistency**: Ensures all developers and environments (Dev, QA, Prod) run on the exact same schema.
+- **Safety**: Prevents accidental data loss by disabling Hibernate's `ddl-auto` in favor of controlled SQL migrations.
+
+#### Creating a new migration:
+1. Create a `.sql` file in `src/main/resources/db/migration/`.
+2. Name it using the pattern `V{Version}__{Description}.sql` (e.g., `V2__add_cpf_to_clientes.sql`).
+
 ### Quick Start (Production Setup)
 ```bash
 cp .env.example .env && docker compose up --build
